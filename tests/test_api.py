@@ -58,6 +58,13 @@ def test_education_filter_us_only(client):
     assert client.get("/occupations?country=UK&education=x").status_code == 400
 
 
+def test_education_levels(client):
+    assert client.get("/education-levels").json() == [
+        "Bachelor's degree",
+        "High school diploma",
+    ]
+
+
 # --- single occupation --------------------------------------------------------
 def test_get_one_occupation(client):
     r = client.get("/occupations/1")
@@ -98,3 +105,13 @@ def test_missing_database_gives_clear_503(tmp_path, monkeypatch):
     monkeypatch.setenv("DB_PATH", str(tmp_path / "nope.db"))
     r = TestClient(app).get("/occupations?country=US")
     assert r.status_code == 503
+
+
+# --- the website ----------------------------------------------------------------
+def test_home_page_and_static_files_are_served():
+    web = TestClient(app)
+    home = web.get("/")
+    assert home.status_code == 200
+    assert "Your Next Step" in home.text
+    assert web.get("/static/app.js").status_code == 200
+    assert web.get("/static/style.css").status_code == 200

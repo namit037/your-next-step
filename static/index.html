@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Next Step: explore careers using real data</title>
+  <meta name="description" content="Search and compare careers in the UK and US using real public data on pay, job growth and education.">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <h1>Your Next Step</h1>
+      <p class="tagline">Explore careers using real public data on pay and job growth.</p>
+      <div class="country-toggle" role="group" aria-label="Choose a country">
+        <button type="button" data-country="UK" aria-pressed="true">UK</button>
+        <button type="button" data-country="US" aria-pressed="false">US</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="search-view">
+      <form id="filters" class="filters" role="search" autocomplete="off">
+        <div class="field field-wide">
+          <label for="q">Search careers</label>
+          <input id="q" type="search" placeholder="e.g. nurse, engineer, electrician" maxlength="100">
+        </div>
+        <div class="field">
+          <label for="min-pay" id="min-pay-label">Minimum annual pay</label>
+          <input id="min-pay" type="number" min="0" step="1000" inputmode="numeric" placeholder="e.g. 40000">
+        </div>
+        <div class="field" id="education-field" hidden>
+          <label for="education">Entry education</label>
+          <select id="education"><option value="">Any</option></select>
+        </div>
+        <div class="field">
+          <label for="sort">Sort by</label>
+          <select id="sort">
+            <option value="title:asc">Name (A–Z)</option>
+            <option value="pay:desc">Highest pay</option>
+            <option value="pay:asc">Lowest pay</option>
+            <option value="growth:desc">Fastest growth</option>
+            <option value="growth:asc">Slowest growth</option>
+          </select>
+        </div>
+      </form>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <ul id="results" class="results"></ul>
+      <nav id="pager" class="pager" aria-label="Pages"></nav>
+    </section>
+
+    <section id="compare-view" hidden>
+      <button type="button" id="back" class="link-button">&larr; Back to search</button>
+      <h2>Compare careers</h2>
+      <div id="compare-body" class="table-scroll"></div>
+    </section>
+  </main>
+
+  <div id="compare-bar" class="compare-bar" hidden>
+    <span id="compare-count"></span>
+    <button type="button" id="compare-go" class="primary">Compare</button>
+    <button type="button" id="compare-clear" class="link-button">Clear</button>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Sources: US Bureau of Labor Statistics (Employment Projections 2025–35); UK Office for National Statistics (ASHE 2026, provisional, full-time employees); UK Department for Education (Skills Imperative 2035 projections).</p>
+      <p>UK data contains public sector information licensed under the Open Government Licence v3.0. Pay is shown in each country's own currency and is not converted, so compare careers within one country only.</p>
+    </div>
+  </footer>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

@@ -4,14 +4,18 @@ Run locally with:  uvicorn app.main:app --reload
 """
 
 import sqlite3
+from pathlib import Path
 from typing import Iterator, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app import db, repository
 from app.schemas import Country, Occupation, OccupationPage
 
 MAX_COMPARE = 3
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 app = FastAPI(
     title="Your Next Step",
@@ -38,6 +42,12 @@ def get_db() -> Iterator[sqlite3.Connection]:
 def health() -> dict:
     """Tiny endpoint to check the server is running."""
     return {"status": "ok"}
+
+
+@app.get("/education-levels", response_model=list[str])
+def education_levels(conn: sqlite3.Connection = Depends(get_db)) -> list[str]:
+    """Options for the education filter (US data only)."""
+    return repository.education_levels(conn)
 
 
 @app.get("/occupations", response_model=OccupationPage)
@@ -107,3 +117,12 @@ def read_occupation(
     if row is None:
         raise HTTPException(404, "Occupation not found.")
     return Occupation(**dict(row))
+
+
+# --- the website itself -----------------------------------------------------------
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+@app.get("/", include_in_schema=False)
+def home() -> FileResponse:
+    return FileResponse(STATIC_DIR / "index.html")

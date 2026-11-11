@@ -56,6 +56,32 @@ def search_occupations(
     return rows, total
 
 
+# Natural order for the education filter (anything unknown is listed last).
+EDUCATION_ORDER = [
+    "No formal educational credential",
+    "High school diploma or equivalent",
+    "Some college, no degree",
+    "Postsecondary nondegree award",
+    "Associate's degree",
+    "Bachelor's degree",
+    "Master's degree",
+    "Doctoral or professional degree",
+]
+
+
+def education_levels(conn: sqlite3.Connection) -> list[str]:
+    """Distinct education levels in the data (US only), lowest to highest."""
+    found = [
+        r[0]
+        for r in conn.execute(
+            "SELECT DISTINCT education FROM occupations"
+            " WHERE country = 'US' AND education IS NOT NULL"
+        )
+    ]
+    rank = {name: i for i, name in enumerate(EDUCATION_ORDER)}
+    return sorted(found, key=lambda name: (rank.get(name, len(rank)), name))
+
+
 def get_occupation(conn: sqlite3.Connection, occupation_id: int) -> sqlite3.Row | None:
     return conn.execute(
         "SELECT * FROM occupations WHERE id = ?", (occupation_id,)
